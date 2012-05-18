@@ -444,4 +444,227 @@ describe("config parser", function () {
             configParser.parse(configPath, session, {});
         }).toThrow(localize.translate("EXCEPTION_INVALID_AUTHOR"));
     });
+
+    it("can parse a standard invokeTargets element", function () {
+        var invokeConfigPath = path.resolve("test/config-invoke-targets.xml");
+
+        configParser.parse(invokeConfigPath, session, function (configObj) {
+            var invokeTarget = configObj.invokeTargets[0];
+
+            expect(invokeTarget).toBeDefined();
+            expect(invokeTarget["@"]).toBeDefined();
+            expect(invokeTarget["@"]["invokeType"]).toEqual("application");
+            expect(invokeTarget["@"]["invokeId"]).toEqual("com.domain.subdomain.appname.app1");
+            expect(invokeTarget.permissions).toContain("access_shared");
+            expect(invokeTarget.permissions).toContain("record_audio");
+            expect(invokeTarget.permissions).toContain("read_geolocation");
+            expect(invokeTarget.filters).toBeDefined();
+            expect(invokeTarget.filters[0].actions).toBeDefined();
+            expect(invokeTarget.filters[0].actions).toContain("bb.action.VIEW");
+            expect(invokeTarget.filters[0].actions).toContain("bb.action.SET");
+            expect(invokeTarget.filters[0].actions).toContain("bb.action.OPEN");
+            expect(invokeTarget.filters[0]["mime-types"]).toBeDefined();
+            expect(invokeTarget.filters[0]["mime-types"]).toContain("image/*");
+            expect(invokeTarget.filters[0]["mime-types"]).toContain("text/*");
+            expect(invokeTarget.filters[0].uris).toBeDefined();
+            expect(invokeTarget.filters[0].uris).toContain("ftp://");
+            expect(invokeTarget.filters[0].uris).toContain("http://");
+            expect(invokeTarget.filters[0].uris).toContain("https://");
+            expect(invokeTarget.filters[0].exts).toBeDefined();
+            expect(invokeTarget.filters[0].exts).toContain("jpg");
+            expect(invokeTarget.filters[0].exts).toContain("png");
+            expect(invokeTarget.filters[0].exts).toContain("txt");
+            expect(invokeTarget.filters[0].exts).toContain("doc");
+        });
+    });
+    
+    it("can parse multiple filters in one element", function () {
+        var data = testUtilities.cloneObj(testData.xml2jsConfig);
+        data["rim:invokeTargets"] = { 
+            "invokeTarget": {
+                "@": { 
+                    "invokeType": "application",
+                    "invokeId": "com.domain.subdomain.appName.app"                
+                },
+                "filters": {
+                    "filter": [{
+                        "actions": {"action": "bb.action.OPEN"},
+                        "mime-types": {"mime-type": [ "text/*", "image/*" ]}
+                    }, {
+                        "actions": { "action": "bb.action.SET" },
+                        "mime-types": {"mime-type": "image/*"}
+                    }]
+                }
+            }
+        };
+         
+        mockParsing(data);
+
+        expect(function () {
+            configParser.parse(configPath, session, function (configObj) {});
+        }).not.toThrow();
+    });
+
+    it("can parse multiple invoke targets", function () {
+        var data = testUtilities.cloneObj(testData.xml2jsConfig);
+        data["rim:invokeTargets"] = { 
+            "invokeTarget": [{
+                "@": { 
+                    "invokeType": "application",
+                    "invokeId": "com.domain.subdomain.appName.app"
+                }
+            }, {
+                "@": {
+                    "invokeType": "viewer",
+                    "invokeId": "com.domain.subdomain.appName.viewer"
+                }
+            }]
+        };
+         
+        mockParsing(data);
+
+        expect(function () {
+            configParser.parse(configPath, session, function (configObj) {});
+        }).not.toThrow();
+
+    });
+
+    it("throws an error when an invoke target doesn't contain any attributes", function () {
+        var data = testUtilities.cloneObj(testData.xml2jsConfig);
+        data["rim:invokeTargets"] = { 
+            "invokeTarget": [{}]
+        };
+         
+        mockParsing(data);
+
+        expect(function () {
+            configParser.parse(configPath, session, function (configObj) {});
+        }).toThrow(localize.translate("EXCEPTION_INVOKE_TARGET_INVALID_ATTRIBUTES"));
+    });
+
+    it("throws an error when an invoke target doesn't contain an invokeType attribute", function () {
+        var data = testUtilities.cloneObj(testData.xml2jsConfig);
+        data["rim:invokeTargets"] = { 
+            "invokeTarget": {
+                "@": { 
+                    "invokeId": "com.domain.subdomain.appName.app"
+                }
+            } 
+        };
+         
+        mockParsing(data);
+
+        expect(function () {
+            configParser.parse(configPath, session, function (configObj) {});
+        }).toThrow(localize.translate("EXCEPTION_INVOKE_TARGET_INVALID_ATTRIBUTES"));
+    });
+
+    it("throws an error when an invoke target does not specify a invokeId attribute", function () {
+        var data = testUtilities.cloneObj(testData.xml2jsConfig);
+        data["rim:invokeTargets"] = { 
+            "invokeTarget": {
+                "@": { 
+                    "invokeType": "application"
+                }
+            } 
+        };
+         
+        mockParsing(data);
+
+        expect(function () {
+            configParser.parse(configPath, session, function (configObj) {});
+        }).toThrow(localize.translate("EXCEPTION_INVOKE_TARGET_INVALID_ATTRIBUTES"));
+    });
+
+    it("throws an error when an invoke target specifies an invalid invokeType attribute", function () {
+        var data = testUtilities.cloneObj(testData.xml2jsConfig);
+        data["rim:invokeTargets"] = { 
+            "invokeTarget": {
+                "@": { 
+                    "invokeType": "myInvokeType"
+                }
+            } 
+        };
+         
+        mockParsing(data);
+
+        expect(function () {
+            configParser.parse(configPath, session, function (configObj) {});
+        }).toThrow(localize.translate("EXCEPTION_INVOKE_TARGET_INVALID_ATTRIBUTES"));
+    });
+
+    it("throws an error when a filter doesn't contain any action or mime-type elements",  function () {
+        var data = testUtilities.cloneObj(testData.xml2jsConfig);
+        data["rim:invokeTargets"] = { 
+            "invokeTarget": {
+                "@": { 
+                    "invokeType": "application",
+                    "invokeId": "com.domain.subdomain.appName.app"                
+                },
+                "filters": {
+                    "filter": {
+                        "uris": {"uri": "https://"},
+                        "exts": {"ext": [ "html", "htm" ]}
+                    }
+                }
+            }
+        };
+         
+        mockParsing(data);
+
+        expect(function () {
+            configParser.parse(configPath, session, function (configObj) {});
+        }).toThrow(localize.translate("EXCEPTION_INVOKE_TARGET_FILTER_INVALID"));
+    });
+
+    it("throws an error when a filter doesn't contain at least one mime-type",  function () {
+        var data = testUtilities.cloneObj(testData.xml2jsConfig);
+        data["rim:invokeTargets"] = { 
+            "invokeTarget": {
+                "@": { 
+                    "invokeType": "application",
+                    "invokeId": "com.domain.subdomain.appName.app"                
+                },
+                "filters": {
+                    "filter": {
+                        "actions": {"action": "bb.action.OPEN"},
+                        "uris": {"uri": "https://"},
+                        "exts": {"ext": [ "html", "htm" ]}
+                    }
+                }
+            }
+        };
+         
+        mockParsing(data);
+
+        expect(function () {
+            configParser.parse(configPath, session, function (configObj) {});
+        }).toThrow(localize.translate("EXCEPTION_INVOKE_TARGET_FILTER_INVALID"));
+    });
+
+    it("throws an error when a filter doesn't contain at least one action",  function () {
+        var data = testUtilities.cloneObj(testData.xml2jsConfig);
+        data["rim:invokeTargets"] = { 
+            "invokeTarget": {
+                "@": { 
+                    "invokeType": "application",
+                    "invokeId": "com.domain.subdomain.appName.app"                
+                },
+                "filters": {
+                    "filter": {
+                        "mime-types": {"mime-type": "text/*"},
+                        "uris": {"uri": "https://"},
+                        "exts": {"ext": [ "html", "htm" ]}
+
+                    }
+                }
+            }
+        };
+         
+        mockParsing(data);
+
+        expect(function () {
+            configParser.parse(configPath, session, function (configObj) {});
+        }).toThrow(localize.translate("EXCEPTION_INVOKE_TARGET_FILTER_INVALID"));
+    });
 });
