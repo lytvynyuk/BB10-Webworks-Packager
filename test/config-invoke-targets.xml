@@ -8,17 +8,12 @@
     <author rim:copyright="No Copyright"
             href="http://www.rim.com/"
             email = "author@rim.com">Research In Motion Ltd.</author>
-    <description>This app does everything.</description>
-    <license href="http://www.apache.org/licenses/LICENSE-2.0">My License</license>
     <icon rim:hover="false" src="test.png"/>
     <rim:permissions>
         <rim:permit>access_shared</rim:permit>
         <rim:permit>read_geolocation</rim:permit>
         <rim:permit>use_camera</rim:permit>
     </rim:permissions>
-    <rim:orientation mode="portrait" />
-    <feature id="blackberry.app" required="true" version="1.0.0.0"/>
-    <feature id="blackberry.system" required="true" version="1.0.0.3"/>
     <access uri="http://www.somedomain1.com" subdomains="true">
         <feature id="blackberry.app" required="true" version="1.0.0.0"/>
         <feature id="blackberry.app.event" required="false" version="2.0.0.0"/>
