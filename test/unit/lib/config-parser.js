@@ -446,9 +446,8 @@ describe("config parser", function () {
     });
 
     it("can parse a standard invokeTargets element", function () {
-        var invokeConfigPath = path.resolve("test/config-invoke-targets.xml");
 
-        configParser.parse(invokeConfigPath, session, function (configObj) {
+        configParser.parse(configPath, session, function (configObj) {
             var invokeTarget = configObj.invokeTargets[0];
 
             expect(invokeTarget).toBeDefined();
