@@ -95,18 +95,18 @@ describe("config parser", function () {
     });
 
     it("parses a bare minimum config.xml without error", function () {
-        configPath = path.resolve("test/config-bare-minimum.xml");
+        var bareMinimumConfigPath = path.resolve("test/config-bare-minimum.xml");
 
-        configParser.parse(configPath, session, function (configObj) {
+        configParser.parse(bareMinimumConfigPath, session, function (configObj) {
             expect(configObj.content).toEqual("local:///startPage.html");
             expect(configObj.version).toEqual("1.0.0");
         });
     });
 
     it("license url is set even if license body is empty", function () {
-        configPath = path.resolve("test/config-license.xml");
+        var licenseConfigPath = path.resolve("test/config-license.xml");
 
-        configParser.parse(configPath, session, function (configObj) {
+        configParser.parse(licenseConfigPath, session, function (configObj) {
             expect(configObj.license).toEqual("");
             expect(configObj.licenseURL).toEqual("http://www.apache.org/licenses/LICENSE-2.0");
         });
