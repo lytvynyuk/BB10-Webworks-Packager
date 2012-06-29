@@ -3,13 +3,13 @@ var session = require(__dirname + "/../../../lib/session"),
     path = require("path"),
     wrench = require("wrench"),
     zipLocation = __dirname + "/../../config.xml";
-    
+
 describe("Session", function () {
     beforeEach(function () {
         //Do not create the source folder
         spyOn(wrench, "mkdirSyncRecursive");
     });
-    
+
     it("sets the source directory correctly when specified [-s C:/sampleApp/mySource]", function () {
         testUtils.mockResolve(path);
         
@@ -22,7 +22,7 @@ describe("Session", function () {
         
         expect(result.sourceDir).toEqual(path.normalize("C:/sampleApp/mySource/src"));
     });
-    
+
     it("sets the source directory correctly when unspecified [-s] and output path set [-o]", function () {
         testUtils.mockResolve(path);
         
@@ -36,7 +36,7 @@ describe("Session", function () {
         //src folder should be created in output directory
         expect(result.sourceDir).toEqual(path.normalize("C:/sampleApp/bin/src"));
     });
-    
+
     it("sets the source directory correctly when unspecified [-s] and no output path is set", function () {
         testUtils.mockResolve(path);
         
@@ -49,7 +49,7 @@ describe("Session", function () {
         //src folder should be created in output directory
         expect(result.sourceDir).toEqual(path.join(path.dirname(zipLocation), "src"));
     });
-    
+
     it("sets the password when specified using -g", function () {
         var data = {
             args: [ 'C:/sampleApp/sample.zip' ],
@@ -60,7 +60,7 @@ describe("Session", function () {
         result = session.initialize(data);
         expect(result.storepass).toEqual('myPassword');
     });
-    
+
     it("does not set the password when not a string", function () {
         //Commander somtimes improperly sets password to a function, when no value provided
         var data = {
@@ -83,7 +83,7 @@ describe("Session", function () {
         result = session.initialize(data);
         expect(result.buildId).toEqual('100');
     });
-    
+
     it("sets the output directory correctly when specified with a relative path [-o myOutput]", function () {
         var bbwpDir = __dirname + "/../../../",
         data = {
@@ -94,5 +94,34 @@ describe("Session", function () {
         
         //output should be set to bbwp location + outputFolder
         expect(result.outputDir).toEqual(path.normalize(path.join(bbwpDir, "myOutput")));
+    });
+
+    it("sets minification by default", function () {
+        var data = {
+            args: [ 'C:/sampleApp/sample.zip' ]
+        },
+        result = session.initialize(data);
+
+        expect(result.minify).toEqual(true);
+    });
+
+    it("sets no minification when [--no-minify] specified", function () {
+        var data = {
+            args: [ 'C:/sampleApp/sample.zip' ],
+            minify: false
+        },
+        result = session.initialize(data);
+
+        expect(result.minify).toEqual(false);
+    });
+
+    it("sets no minification when [-d] specified", function () {
+        var data = {
+            args: [ 'C:/sampleApp/sample.zip' ],
+            debug: true
+        },
+        result = session.initialize(data);
+
+        expect(result.minify).toEqual(false);
     });
 });
