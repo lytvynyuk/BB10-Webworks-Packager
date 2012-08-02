@@ -210,9 +210,12 @@ describe("File manager", function () {
     });
 
     it("cleanSource() should delete source folder", function () {
+                
         expect(path.existsSync(session.sourceDir)).toBeTruthy();
         expect(fs.statSync(session.sourceDir).isDirectory()).toBeTruthy();
-        fileMgr.cleanSource(session);
+        fileMgr.cleanSource(session, 1);
+        expect(path.existsSync(session.sourceDir)).toBeTruthy();
+        fileMgr.cleanSource(session, 0);
         expect(path.existsSync(session.sourceDir)).toBeFalsy();
     });
 });
