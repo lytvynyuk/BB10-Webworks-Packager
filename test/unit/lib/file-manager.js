@@ -211,23 +211,8 @@ describe("File manager", function () {
     it("cleanSource() should delete source folder", function () {
         expect(path.existsSync(session.sourceDir)).toBeTruthy();
         expect(fs.statSync(session.sourceDir).isDirectory()).toBeTruthy();
-
-        session.keepSource = true;
-        fileMgr.cleanSource(session, 1);
-        expect(path.existsSync(session.sourceDir)).toBeTruthy();
-        fileMgr.cleanSource(session, 0);
-        expect(path.existsSync(session.sourceDir)).toBeFalsy();
-        
-        fileMgr.unzip(session.archivePath, session.sourceDir); // creating src folder
-        
         session.keepSource = false;
-        fileMgr.cleanSource(session, 0);        
-        expect(path.existsSync(session.sourceDir)).toBeFalsy();
-        
-        fileMgr.unzip(session.archivePath, session.sourceDir); // cretaing src folder
-        
-        fileMgr.cleanSource(session, 1);
+        fileMgr.cleanSource(session);        
         expect(path.existsSync(session.sourceDir)).toBeFalsy();
     });
-    
 });

@@ -217,7 +217,8 @@ describe("config parser", function () {
         spyOn(fileManager, "cleanSource");
 
         configParser.parse(configPath, session, extManager, function () {});
-        expect(fileManager.cleanSource).toHaveBeenCalledWith(session, 0);
+        expect(session.keepSource).toBe(false);
+        expect(fileManager.cleanSource).toHaveBeenCalledWith(session);
     });
 
     it("adds the access_internet permission if unprovided", function () {
