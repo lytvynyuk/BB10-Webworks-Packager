@@ -215,7 +215,7 @@ describe("config parser", function () {
 
         spyOn(logger, "error");
         spyOn(fileManager, "cleanSource");
-
+        session.keepSource = true;
         configParser.parse(configPath, session, extManager, function () {});
         expect(session.keepSource).toBe(false);
         expect(fileManager.cleanSource).toHaveBeenCalledWith(session);
