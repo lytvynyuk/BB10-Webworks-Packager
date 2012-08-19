@@ -1,0 +1,27 @@
+﻿<html>
+<head>
+    <title>App API</title>
+	<script src="webworks-1.0.0.15.js" type="text/javascript"></script>
+    <script>
+    function sendReport(report) {
+        var xmlhttp = new XMLHttpRequest();
+        console.log("Sending testing result now...");
+        xmlhttp.onreadystatechange=function()
+        {
+          if (xmlhttp.readyState==4 && xmlhttp.status==200)
+          {
+            console.log(xmlhttp.responseText);
+          }
+        }
+        xmlhttp.open("POST", "http://169.254.0.2:9644", true);
+        xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xmlhttp.send(JSON.stringify({status: report}));
+      }
+    </script>
+</head>
+<body>
+
+	<button onclick="sendReport('success')">sendReport('success')</button><br /><br />
+	<button onclick="sendReport('fail')">sendReport('fail')</button><br /><br />
+</body>
+</html>
