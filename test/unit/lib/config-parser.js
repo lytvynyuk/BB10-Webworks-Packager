@@ -9,6 +9,7 @@ var testData = require("./test-data"),
     fs = require("fsext"),
     session = testData.session,
     configPath = path.resolve("test/config.xml"),
+    configBadPath = path.resolve("test2/config.xml"),
     configBareMinimumPath = path.resolve("test/config-bare-minimum.xml"),
     extManager = {
         getGlobalFeatures: function () {
@@ -24,6 +25,16 @@ describe("config parser", function () {
         spyOn(fs, "copySync");
     });
 
+    it("tries to open a config.xml file that doesn't exist", function () {
+        expect(function (){
+            //This is clearly wrong
+            //Should be:
+                //spyOn(path, "existsSync).andReturn(false);
+            path.existsSync.andReturn(false);
+            configParser.parse(configBadPath, session, extManager, {});
+        }).toThrow(localize.translate("EXCEPTION_CONFIG_NOT_FOUND"));
+    });
+   
     it("parses standard elements in a config.xml", function () {
         configParser.parse(configPath, session, extManager, function (configObj) {
             expect(configObj.content).toEqual("local:///startPage.html");
@@ -558,7 +569,7 @@ describe("config parser", function () {
             "@": {
                 "id": "com.domain.subdomain.appName.app"
             },
-            "type": "application",
+            "type": "application"
         }, {
             "@": {
                 "id": "com.domain.subdomain.appName.viewer"
