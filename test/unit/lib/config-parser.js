@@ -27,14 +27,11 @@ describe("config parser", function () {
 
     it("tries to open a config.xml file that doesn't exist", function () {
         expect(function (){
-            //This is clearly wrong
-            //Should be:
-                //spyOn(path, "existsSync).andReturn(false);
-            path.existsSync.andReturn(false);
+            spyOn(path, "existsSync").andReturn(false);
             configParser.parse(configBadPath, session, extManager, {});
         }).toThrow(localize.translate("EXCEPTION_CONFIG_NOT_FOUND"));
     });
-   
+
     it("parses standard elements in a config.xml", function () {
         configParser.parse(configPath, session, extManager, function (configObj) {
             expect(configObj.content).toEqual("local:///startPage.html");
@@ -268,11 +265,11 @@ describe("config parser", function () {
             expect(configObj.permissions).toContain('run_when_backgrounded');
             expect(configObj.autoDeferNetworkingAndJavaScript).toEqual(false);
         });
-    });   
+    });
 
     it("sets autoDeferNetworkingAndJavaScript to true by default", function () {
         var data = testUtilities.cloneObj(testData.xml2jsConfig);
-        
+
         data['feature'] = undefined; // no features
         data["rim:permissions"] = {}; // ensure no run_when_backgrounded permission exists
 
@@ -281,8 +278,8 @@ describe("config parser", function () {
         configParser.parse(configPath, session, extManager, function (configObj) {
             expect(configObj.autoDeferNetworkingAndJavaScript).toEqual(true);
         });
-    });    
-    
+    });
+
     it("does not throw an exception with empty permit tags", function () {
         var data = testUtilities.cloneObj(testData.xml2jsConfig);
         data['rim:permit'] = ['read_geolocation', {}, 'access_internet' ];
