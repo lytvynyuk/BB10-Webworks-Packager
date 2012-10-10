@@ -33,9 +33,7 @@ describe("config parser", function () {
             expect(configObj.licenseURL).toEqual("http://www.apache.org/licenses/LICENSE-2.0");
             expect(configObj.icon).toEqual(["test.png"]);
             expect(configObj.configXML).toEqual("config.xml");
-			expect(configObj.category).toEqual("all");
-			expect(configObj.author).toEqual("Research In Motion Ltd.");
-			expect(configObj.author).toEqual("Research In Motion Ltd.");
+            expect(configObj.category).toEqual("all");
             expect(configObj.author).toEqual("Research In Motion Ltd.");
             expect(configObj.authorURL).toEqual("http://www.rim.com/");
             expect(configObj.copyright).toEqual("No Copyright");
