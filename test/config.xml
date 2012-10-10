@@ -5,6 +5,7 @@
         id="My WidgetId">
     <name>Demo</name>
     <content src="local:///startPage.html"/>
+    <rim:category name="all"/>
     <author rim:copyright="No Copyright"
             href="http://www.rim.com/"
             email = "author@rim.com">Research In Motion Ltd.</author>
